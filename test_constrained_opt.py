@@ -5,7 +5,7 @@ import scipy.optimize as optimize
 import numpy as np
 
 def f(params):
-    #print(params)  # <-- you'll see that params is a NumPy array
+    print(params)  # <-- you'll see that params is a NumPy array
     m, a = params # <-- for readability, assign names to component variables
     return 6.0*m**3 - 4.0*(a+1)**3 - 12.0
 
@@ -17,7 +17,13 @@ def constraint(x):
 
 initial_guess = [1, 1]
 
-result = optimize.minimize(f, initial_guess, constraints={"fun": constraint, "type": "ineq"})
+result = optimize.minimize(f, initial_guess, 
+              constraints=({"type": "ineq",  
+                            "fun": lambda x: x[0]**3 - ((3.0/2.0)*(x[1]*x[1]+3.0*x[1])+9.0)*x[0]-2.0/3.0*(x[1]**3+3.0*x[1]*x[1]+2.0*x[1])},
+                          {"type": "ineq",
+                            "fun": lambda x: x[1]*(x[1]+1.0)*(x[0]/x[1]*3.0-2.0) - 4.0}),  
+                          bounds=((0,None),(0,None)),options=dict({'maxiter': 10})
+                          )
 
 if result.success:
     fitted_params = result.x
