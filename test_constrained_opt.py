@@ -16,8 +16,11 @@ def constraint(x):
 
 
 initial_guess = [1, 1]
-
-result = optimize.minimize(f, initial_guess, constraints={"fun": constraint, "type": "ineq"})
+# I think I can use bounds for enforcing the positivity requirement on m and a
+# not sure if I am doing this right though
+bnds = ((0,None), (0, None)) # tuple for 1d box constraint
+#result = optimize.minimize(f, initial_guess, constraints={"fun": constraint, "type": "ineq"})
+result = optimize.minimize(f, initial_guess, bounds=bnds, constraints={"fun": constraint, "type": "ineq"})
 
 if result.success:
     fitted_params = result.x
